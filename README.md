@@ -1,7 +1,7 @@
 # Data14-Final-Project
 
 Sprint 0:
-Goal: --
+Goal: None
 Accomplished:
 - Assigned roles for devs, testers and BAs
 - Had a look at the data to make sure we understood what it was
