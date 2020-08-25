@@ -1,96 +1,37 @@
-import boto3
-from pprint import pprint
+import phonenumbers
+from ExtractionClass import ExtractFromS3
 import pandas as pd
 
 
-class talent_csv:
+class talent_csv(ExtractFromS3):
     def __init__(self):
-        self.s3_client = boto3.client('s3')
-        self.s3_resource = boto3.resource('s3')
-        self.bucket_name = 'data14-engineering-project'
-        self.bucket = self.s3_resource.Bucket(self.bucket_name)
-        self.contents = self.bucket.objects.all()
-        self.csv_objects = []
-        self.get_csv_object()
-        self.phone_numbers()
+        # Inherited Extraction class, ran method to get data
+        super().__init__()
+        super().get_data()
+        self.running_cleaner_methods()
 
-    def get_csv_object(self):
-        for objects in self.contents:
-            suffix = '.csv'
-            objects_key = objects.key
-            if objects_key.endswith(suffix):
-                if objects_key.startswith('Talent'):
-                    self.csv_objects.append(objects_key)
-
-    # def read_csv(self):
-    #     for item in self.csv_objects:
-    #         object = self.s3_client.get_object(
-    #             Bucket = self.bucket_name,
-    #             Key = item)
-    #         df = pd.read_csv(object['Body'])
-    #         return df.head(50)
-
-    def phone_numbers(self):
-        for index in self.csv_objects:
+    def running_cleaner_methods(self):
+        # Iterating through list of csv's, accessing the Body to enable cleaning
+        for index in self.talent_csv_list:
             obj = self.s3_client.get_object(
-                Bucket = self.bucket_name,
-                Key = index)
+                Bucket=self.bucket_name,
+                Key=index)
             df = pd.read_csv(obj['Body'])
-            for phone in df['phone_number']:
-                if type(phone) is str:
-                    if '-' in phone:
-                        phone.replace('-', ' ')
-                    if '(' in phone:
-                        phone.replace('(', '')
-                    if ')' in phone:
-                        phone.replace(')', '')
-                    if '=' in phone:
-                        phone.replace('=', '+')
-                    print(phone)
+            self.cleaning_phone_numbers(df['phone_number'])
 
-
-    # def cleaning_phones(self, phone):
-    #     correct = False
-    #     while not correct:
-    #         if '-' in phone:
-    #             phone.replace('-', ' ')
-    #         if '(' in phone:
-    #             phone.strip('(')
-    #         if ')' in phone:
-    #             phone.strip(')')
-    #         if '=' in phone:
-    #             phone.replace('=', '+')
-    #         else:
-    #             correct = True
-    #     return phone
-
-
+    def cleaning_phone_numbers(self, list_of_phones):        
+        for phone in list_of_phones:
+            if type(phone) is str:
+                phone_filter = filter(str.isdigit, phone)
+                clean_phone = "".join(phone_filter)
+                clean_phone = f"+{clean_phone}"
+                format_phone = phonenumbers.parse(clean_phone, 'GB')
+                format_phone = phonenumbers.format_number(format_phone, phonenumbers.PhoneNumberFormat.INTERNATIONAL)
+                print(format_phone)
+            else:
+                print('No phone listed')
 
 
 test = talent_csv()
-print(test.phone_numbers())
-# s3_april_df = pd.read_csv(s3_talent_april['Body'])
-# phone_numbers = s3_april_df.phone_number
-# # print(phone_numbers)
-#
-#
-# # def phone_format(phones):
-# phone_list = []
-# for phone in phone_numbers:
-#     correct = False
-#     while not correct:
-#         if phone.startswith('='):
-#             phone.replace('=', '+')
-#         elif '-' in phone:
-#             phone.replace('-', ' ')
-#         elif '(' in phone:
-#             phone.strip('(')
-#         elif ')' in phone:
-#             phone.strip(')')
-#         else:
-#             correct = True
-#             phone_list.append(phone)
-# print(phone_list)
-# #
-# #
-# # phone_format(phone_numbers)
+
+
