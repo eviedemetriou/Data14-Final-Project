@@ -17,8 +17,8 @@ class ExtractFromS3:
 
     # Method to separate objects into lists in preparation for cleaning
     def get_data(self):
-        for object in self.contents:  # Iterating through each object in each bucket
-            object_key = object.key
+        for obj in self.contents:  # Iterating through each object in each bucket
+            object_key = obj.key
             if object_key.startswith('Talent'):
                 if object_key.endswith('.csv'):  # To retrieve csv files in the Talent bucket
                     self.talent_csv_list.append(object_key)
