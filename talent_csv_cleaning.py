@@ -32,10 +32,10 @@ class talent_csv:
 
     def phone_numbers(self):
         for index in self.csv_objects:
-            object = self.s3_client.get_object(
+            obj = self.s3_client.get_object(
                 Bucket = self.bucket_name,
                 Key = index)
-            df = pd.read_csv(object['Body'])
+            df = pd.read_csv(obj['Body'])
             for phone in df['phone_number']:
                 if type(phone) is str:
                     if '-' in phone:
