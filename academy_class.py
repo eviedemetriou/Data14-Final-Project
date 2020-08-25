@@ -1,26 +1,21 @@
 import boto3
-import csv
 import pandas as pd
-from pprint import pprint
+from ExtractionClass import ExtractFromS3
 
 class Academy(ExtractFromS3):
 
     def __init__(self):
         super().__init__()
-        self.s3_client = boto3.client('s3')
-        self.s3_resource = boto3.resource('s3')
-        self.bucket_list = self.s3_client.list_buckets()
-        self.bucket_name = 'data14-engineering-project'
-        self.bucket = self.s3_resource.Bucket(self.bucket_name)
-        self.contents = self.bucket.objects.all()
-        self.s3_object = self.s3_client.get_object(Bucket= self.bucket_name,Key= 'Academy/Business_20_2019-02-11.csv')
-        # self.df = pd.read_csv(self.s3_object['Body'])
+        self.df_list = []
+        self.get_data()
+        self.read_object()
         self.split_applicant_names()
         self.split_trainer_names()
-        self.df_list = []
+        self.rearrange()
 
 
     def read_object(self):
+        # Read the body of each object and append the contents to a list as dataframes
         for obj in self.academy_csv_list:
             s3_object = self.s3_client.get_object(
                 Bucket= self.bucket_name,
@@ -30,22 +25,29 @@ class Academy(ExtractFromS3):
 
 
     def split_applicant_names(self):
+        # Separate the first and last names of applicants
         new_df_list = []
         for df in self.df_list:
-            applicant_splitted = df['name'].str.split()
-            df['first_name'] = applicant_splitted.str[:-1]
-            df['last_name'] = applicant_splitted.str[-1]
+            applicant_split = df['name'].str.split()
+            df['first_name'] = applicant_split.str[:-1]
+            df['last_name'] = applicant_split.str[-1]
+            new_df_list.append(df)
         self.df_list = new_df_list
+
 
     def split_trainer_names(self):
+        # Separate the first and last names of trainers
         new_df_list = []
         for df in self.df_list:
-            trainer_splitted = df['trainer'].str.split()
-            df['trainer_first_name'] = trainer_splitted.str[:-1]
-            df['trainer_last_name'] = trainer_splitted.str[-1]
+            trainer_split = df['trainer'].str.split()
+            df['trainer_first_name'] = trainer_split.str[:-1]
+            df['trainer_last_name'] = trainer_split.str[-1]
+            new_df_list.append(df)
         self.df_list = new_df_list
 
+
     def rearrange(self):
+        # Rearranging the order of the dataframes
         new_df_list = []
         for df in self.df_list:
             df = df[["first_name","last_name","trainer_first_name","trainer_last_name",
@@ -61,13 +63,7 @@ class Academy(ExtractFromS3):
             new_df_list.append(df)
         self.df_list = new_df_list
 
-
-
-
 test = Academy()
-# print(test.get_csv_objects())
-#print(test.read_object())
-
-print(test.rearrange())
+print(test.df_list)
 
 
