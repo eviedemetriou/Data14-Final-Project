@@ -1,6 +1,4 @@
 import boto3
-
-
 class ExtractFromS3:
     # Initialisation with lists to hold objects obtained from methods
     def __init__(self):
