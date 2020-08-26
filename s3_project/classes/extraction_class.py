@@ -10,7 +10,7 @@ class ExtractFromS3:
         self.bucket_name = 'data14-engineering-project'
         self.bucket = self.s3_resource.Bucket(self.bucket_name)
         self.contents = self.bucket.objects.all()
-        self.academy_csv_list = []  # Lists fpr storing separated objects
+        self.academy_csv_list = []  # Lists for storing separated objects
         self.talent_csv_list = []
         self.talent_json_list = []
         self.talent_txt_list = []

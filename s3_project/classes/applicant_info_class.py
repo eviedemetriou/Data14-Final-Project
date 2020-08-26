@@ -8,11 +8,11 @@ class ApplicantInfoClean(ExtractFromS3):
 
     def __init__(self):
         super().__init__()
-        self.iterate()
+        self.clean_files()
 
-    # This method iterates through each file, and applies the cleaning methods to each file.
-    # This method also appends the cleaned files to a dictionary.
-    def iterate(self):
+    def clean_files(self):
+        # This method iterates through each file, and applies the cleaning methods to each file.
+        # This method also appends the cleaned files to a dictionary.
         object_dict = {}
         talent_json_dict = {}
         for file in self.talent_json_list:
@@ -27,10 +27,10 @@ class ApplicantInfoClean(ExtractFromS3):
             talent_json_dict[file] = object_dict
         return object_dict
 
-    # This method splits name into first_name and last_name,
-    # if there's more than 2 names, every name but the last goes into the first_name column,
-    # and the ones with more than 2 names get appended to a text file.
     def split_names(self, object_dict):
+        # This method splits name into first_name and last_name,
+        # if there's more than 2 names, every name but the last goes into the first_name column,
+        # and the ones with more than 2 names get appended to a text file.
         name_list = object_dict['name'].split(' ')
         if len(name_list) > 2:
             object_dict['first_name'] = " ".join(name_list[:-1])
@@ -42,20 +42,20 @@ class ApplicantInfoClean(ExtractFromS3):
             object_dict.pop('name')
         return [object_dict['first_name'], object_dict['last_name']]
 
-    # This method appends a text file.
     def append_file(self, file):
+        # This method appends a text file.
         with open("applicant_info_edgecases.txt", "a") as ai:
             ai.writelines(f"{file}\n")
 
-    # This method cleans the date column
     def date_format(self, object_dict):
+        # This method cleans the date column
         date = object_dict['date']
         date = date.replace('//', '/')
         object_dict['date'] = datetime.strptime(date, '%d/%M/%Y').strftime('%Y/%M/%d')
         return object_dict['date']
 
-    # This method changes result, self_dev, financial_support and geo_flex to boolean values.
     def boolean_values(self, object_dict):
+        # This method changes result, self_dev, financial_support and geo_flex to boolean values.
         list_of_booleans = [object_dict['result'], object_dict['self_development'],
                             object_dict['financial_support_self'], object_dict['geo_flex']]
         list_of_booleans = list(map(lambda x: True if x == 'Yes' or x == 'Pass' else False, list_of_booleans))
@@ -64,5 +64,3 @@ class ApplicantInfoClean(ExtractFromS3):
         object_dict['financial_support_self'] = list_of_booleans[2]
         object_dict['geo_flex'] = list_of_booleans[3]
         return [object_dict['result'], object_dict['self_development'], object_dict['financial_support_self'], object_dict['geo_flex']]
-
-juxhen = ApplicantInfoClean()
