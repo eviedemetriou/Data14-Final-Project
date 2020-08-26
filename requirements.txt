@@ -1,5 +1,4 @@
 boto3
 pandas
-phone_numbers
 pytests
 numpy
