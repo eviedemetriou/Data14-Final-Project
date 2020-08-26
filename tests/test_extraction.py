@@ -17,8 +17,8 @@ def test_extraction():
     assert len(test.academy_csv_list) > 0
 
 def test_check_files():
+    # Check lists actually contain the specific file types
     test.get_data()
-    # check lists actually contain the specific file types
     # Iterate through talent csv list and see if all files end in .csv
     for file in test.talent_csv_list:
         assert file.endswith('.csv')
@@ -33,14 +33,15 @@ def test_check_files():
         assert file.endswith('.csv')
 
 def test_greater_than_one():
-    test.get_data()
     # See if the length of the list isn't just one
+    test.get_data()
     assert len(test.talent_csv_list) > 1
     assert len(test.talent_json_list) > 1
     assert len(test.talent_txt_list) > 1
     assert len(test.academy_csv_list) > 1
 
 def test_file_verify():
+    # Check a file ends in the correct path
     test.get_data()
     # Test for a file in talent csv list
     for file in test.talent_csv_list:
