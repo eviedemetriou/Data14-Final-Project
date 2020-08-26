@@ -8,7 +8,7 @@ class Academy(ExtractFromS3):
         super().__init__()
         self.df_list = []
         self.read_object()
-        self.split_trainee_names()
+        self.split_trainee_names('sparta_scores_issues.txt')
         self.split_trainer_names()
         self.rearrange()
 
@@ -20,12 +20,12 @@ class Academy(ExtractFromS3):
                 Bucket= self.bucket_name,
                 Key= obj)
             df = pd.read_csv(s3_object['Body'])
-            df['course_name'] = obj.split('_')[0] +'_'+ obj.split('_')[1]
-            df['course_start_date'] = obj.split('_')[2].split('.')[0]
+            df['course_name'] = obj.split('_')[0] +'_'+ obj.split('_')[1]  # Make a new column with the course name
+            df['course_start_date'] = obj.split('_')[2].split('.')[0]   # Make a new column with the course start date
             self.df_list.append(df)
 
 
-    def split_trainee_names(self):
+    def split_trainee_names(self,file):
         # Separate the first and last names of applicants
         new_df_list = []
         for df in self.df_list:
@@ -33,7 +33,17 @@ class Academy(ExtractFromS3):
             df['first_name'] = trainee_split.str[:-1]
             df['last_name'] = trainee_split.str[-1]
             new_df_list.append(df)
+            for index, row in df.iterrows():
+                if len(df['first_name']) >=3:
+                    self.append_to_txt_file(row['name'])
         self.df_list = new_df_list
+
+
+
+    def append_to_txt_file(self,file):
+        with open("sparta_scores_issues.txt", "w") as text_file:
+            text_file.writelines(f"{file}\n")
+
 
 
     def split_trainer_names(self):
