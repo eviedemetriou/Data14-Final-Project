@@ -1,6 +1,6 @@
 import boto3
 from pprint import pprint
-from ExtractionClass import ExtractFromS3
+from ExtractionClass.py import ExtractFromS3
 
 class TextFiles(ExtractFromS3):
 
