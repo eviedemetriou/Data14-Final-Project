@@ -22,11 +22,12 @@ class TalentCsv(ExtractFromS3):
             df['gender'] = df['gender'].apply(self.formatting_gender)
             df = df.drop(columns='id')
             df['dob'] = df['dob'].apply(self.dob_formatting)
-            print(df['dob'])
 
     def cleaning_phone_numbers(self, phone):
         # Takes a phone number as an argument, changes format to fit our requirements
         if type(phone) is str:
+            if phone.startswith('0'):
+                phone = phone.replace('0', '44', 1)
             phone_filter = filter(str.isdigit, phone)
             clean_phone = "".join(phone_filter)
             format_phone = clean_phone[:2] + ' ' + clean_phone[2:5] + ' ' + clean_phone[5:8] + ' ' + clean_phone[8:]
