@@ -1,6 +1,5 @@
 import boto3
 
-
 class ExtractFromS3:
     # Initialisation with lists to hold objects obtained from methods
     def __init__(self):
@@ -14,6 +13,7 @@ class ExtractFromS3:
         self.talent_csv_list = []
         self.talent_json_list = []
         self.talent_txt_list = []
+
 
     # Method to separate objects into lists in preparation for cleaning
     def get_data(self):
