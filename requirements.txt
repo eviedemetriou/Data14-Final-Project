@@ -1,5 +1,5 @@
 boto3
 pandas
-phone_numbers
-pytests
+phonenumbers
+pytest
 numpy
