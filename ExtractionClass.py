@@ -14,6 +14,7 @@ class ExtractFromS3:
         self.talent_csv_list = []
         self.talent_json_list = []
         self.talent_txt_list = []
+        self.get_data()
 
     # Method to separate objects into lists in preparation for cleaning
     def get_data(self):
