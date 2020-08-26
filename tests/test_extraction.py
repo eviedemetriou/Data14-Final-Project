@@ -39,3 +39,18 @@ def test_greater_than_one():
     assert len(test.talent_json_list) > 1
     assert len(test.talent_txt_list) > 1
     assert len(test.academy_csv_list) > 1
+
+def test_file_verify():
+    test.get_data()
+    # Test for a file in talent csv list
+    for file in test.talent_csv_list:
+        assert file.find("April2019Applicants.csv")
+    # Test for a file in talent json list
+    for file in test.talent_json_list:
+        assert file.find("10603.json")
+    # Test for a file in talent txt list
+    for file in test.talent_txt_list:
+        assert file.find("Sparta Day 1 August 2019.txt")
+    # Test for a file in academy csv list
+    for file in test.academy_csv_list:
+        assert file.find("Business_20_2019-02-11.csv")
