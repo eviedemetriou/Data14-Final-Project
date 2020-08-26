@@ -1,5 +1,4 @@
 from s3_project.classes.extraction_class import ExtractFromS3
-import boto3
 import json
 import pandas as pd
 from datetime import datetime
@@ -14,9 +13,9 @@ class ApplicantInfoClean(ExtractFromS3):
     def clean_files(self):
         # This method iterates through each file, and applies the cleaning methods to each file.
         # This method also appends the cleaned files to a dictionary.
-        object_dict = {}
-        talent_json_dict = {}
-        for file in self.talent_json_list:
+        talent_json_list = []
+        instance = ExtractFromS3()
+        for file in instance.talent_json_list:
             s3_object = self.s3_client.get_object(Bucket=self.bucket_name, Key=file)
             body = s3_object['Body'].read()
             object_dict = json.loads(body)
@@ -27,9 +26,9 @@ class ApplicantInfoClean(ExtractFromS3):
             self.split_names(object_dict)
             self.date_format(object_dict)
             self.boolean_values(object_dict)
-            talent_json_dict[file] = object_dict
-        self.create_dataframe(object_dict)
-        return object_dict
+            talent_json_list.append(object_dict)
+        self.create_dataframe(talent_json_list)
+        return talent_json_list
 
     def split_names(self, object_dict):
         # This method splits name into first_name and last_name,
@@ -59,12 +58,14 @@ class ApplicantInfoClean(ExtractFromS3):
         return object_dict['date']
 
     def boolean_values(self, input_value):
+        # Transforms an input to be a boolean value
         if input_value == 'Yes' or input_value == 'Pass':
             return True
         elif input_value == 'No' or input_value == 'Fail':
             return False
 
     def change_boolean(self, object_dict):
+        # Applies the boolean transformation to the appropriate columns
         object_dict['result'] = self.boolean_values(object_dict['result'])
         object_dict['self_development'] = self.boolean_values(object_dict['self_development'])
         object_dict['financial_support_self'] = self.boolean_values(object_dict['financial_support_self'])
@@ -72,11 +73,8 @@ class ApplicantInfoClean(ExtractFromS3):
         return [object_dict['result'], object_dict['self_development'], object_dict['financial_support_self'],
                 object_dict['geo_flex']]
 
-    def create_dataframe(self, object_dict):
-        data = object_dict
-        df = pd.DataFrame.from_dict(data)
-        print(df)
-
-
-juxhen = ApplicantInfoClean()
+    def create_dataframe(self, talent_json_list):
+        # Creates a dataframe with all the data
+        df = pd.DataFrame(talent_json_list)
+        print(df[['tech_self_score', 'strengths']])
 
