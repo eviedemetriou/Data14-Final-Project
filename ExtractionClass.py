@@ -2,8 +2,9 @@ import boto3
 
 
 class ExtractFromS3:
-    # Initialisation with lists to hold objects obtained from methods
+
     def __init__(self):
+        # Initialisation with lists to hold objects obtained from methods
         self.s3_client = boto3.client('s3')
         self.s3_resource = boto3.resource('s3')
         self.bucket_list = self.s3_client.list_buckets()
@@ -15,8 +16,8 @@ class ExtractFromS3:
         self.talent_json_list = []
         self.talent_txt_list = []
 
-    # Method to separate objects into lists in preparation for cleaning
     def get_data(self):
+        # Method to separate objects into lists in preparation for cleaning
         for obj in self.contents:  # Iterating through each object in each bucket
             object_key = obj.key
             if object_key.startswith('Talent'):
