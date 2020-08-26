@@ -3,7 +3,7 @@ from ExtractionClass import ExtractFromS3
 
 def test_extraction():
     test = ExtractFromS3()
-    # see if they are empty
+    # see if the lists beforehand are empty
     assert len(test.talent_csv_list) == 0
     assert len(test.talent_json_list) == 0
     assert len(test.talent_txt_list) == 0
