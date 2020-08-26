@@ -1,5 +1,6 @@
 from s3_project.classes.ExtractionClass import ExtractFromS3
 import pandas as pd
+import datetime
 
 
 class TalentCsv(ExtractFromS3):
@@ -20,7 +21,9 @@ class TalentCsv(ExtractFromS3):
             df['first_name'] = df['name'].apply(self.splitting_first_names)
             df['last_name'] = df['name'].apply(self.splitting_last_names)
             df['gender'] = df['gender'].apply(self.formatting_gender)
-            print(df.head(10))
+            df = df.drop(columns='id')
+            df['dob'] = df['dob'].apply(self.dob_formatting)
+            print(df['dob'])
 
     def cleaning_phone_numbers(self, phone):
         # Takes a phone number as an argument, changes format to fit our requirements
@@ -58,7 +61,15 @@ class TalentCsv(ExtractFromS3):
         else:
             return gender
 
+    def dob_formatting(self, date):
+        if type(date) is str:
+            date_format = '%d/%m/%Y'
+            datetime_obj = datetime.datetime.strptime(date, date_format)
+            return datetime_obj.date()
+        else:
+            return date
 
-test = talent_csv()
+
+test = TalentCsv()
 
 
