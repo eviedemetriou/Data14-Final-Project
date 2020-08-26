@@ -1,6 +1,7 @@
 from s3_project.classes.extraction_class import ExtractFromS3
 import boto3
 import json
+import pandas as pd
 from datetime import datetime
 
 
@@ -21,10 +22,13 @@ class ApplicantInfoClean(ExtractFromS3):
             object_dict = json.loads(body)
             if len(object_dict['name'].split(' ')) > 2:
                 self.append_file(file)
+            if 'tech_self_score' not in object_dict.keys():
+                object_dict['tech_self_score'] = 0
             self.split_names(object_dict)
             self.date_format(object_dict)
             self.boolean_values(object_dict)
             talent_json_dict[file] = object_dict
+        self.create_dataframe(object_dict)
         return object_dict
 
     def split_names(self, object_dict):
@@ -54,13 +58,25 @@ class ApplicantInfoClean(ExtractFromS3):
         object_dict['date'] = datetime.strptime(date, '%d/%M/%Y').strftime('%Y/%M/%d')
         return object_dict['date']
 
-    def boolean_values(self, object_dict):
-        # This method changes result, self_dev, financial_support and geo_flex to boolean values.
-        list_of_booleans = [object_dict['result'], object_dict['self_development'],
-                            object_dict['financial_support_self'], object_dict['geo_flex']]
-        list_of_booleans = list(map(lambda x: True if x == 'Yes' or x == 'Pass' else False, list_of_booleans))
-        object_dict['result'] = list_of_booleans[0]
-        object_dict['self_development'] = list_of_booleans[1]
-        object_dict['financial_support_self'] = list_of_booleans[2]
-        object_dict['geo_flex'] = list_of_booleans[3]
-        return [object_dict['result'], object_dict['self_development'], object_dict['financial_support_self'], object_dict['geo_flex']]
+    def boolean_values(self, input_value):
+        if input_value == 'Yes' or input_value == 'Pass':
+            return True
+        elif input_value == 'No' or input_value == 'Fail':
+            return False
+
+    def change_boolean(self, object_dict):
+        object_dict['result'] = self.boolean_values(object_dict['result'])
+        object_dict['self_development'] = self.boolean_values(object_dict['self_development'])
+        object_dict['financial_support_self'] = self.boolean_values(object_dict['financial_support_self'])
+        object_dict['geo_flex'] = self.boolean_values(object_dict['geo_flex'])
+        return [object_dict['result'], object_dict['self_development'], object_dict['financial_support_self'],
+                object_dict['geo_flex']]
+
+    def create_dataframe(self, object_dict):
+        data = object_dict
+        df = pd.DataFrame.from_dict(data)
+        print(df)
+
+
+juxhen = ApplicantInfoClean()
+
