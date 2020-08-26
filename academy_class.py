@@ -20,13 +20,9 @@ class Academy(ExtractFromS3):
                 Bucket= self.bucket_name,
                 Key= obj)
             df = pd.read_csv(s3_object['Body'])
+            df['course_name'] = obj.split('_')[0] +'_'+ obj.split('_')[1]
+            df['course_start_date'] = obj.split('_')[2].split('.')[0]
             self.df_list.append(df)
-
-    def course_name(self):
-        new_df_list = []
-        for df in self.df_list:
-            
-
 
 
     def split_trainee_names(self):
@@ -57,10 +53,10 @@ class Academy(ExtractFromS3):
         for df in self.df_list:
             behaviours = ["Analytic","Independent","Determined",
                           "Professional","Studious","Imaginative"]
-            course_duration = (len(list(df.columns)) - 4)/ len(behaviours)
+            course_duration = (len(list(df.columns)) - 6)/ len(behaviours)
             course_weeks = list(range(1,int(course_duration) + 1))
 
-            column_names = ["first_name","last_name","trainer_first_name","trainer_last_name"]
+            column_names = ["first_name","last_name","trainer_first_name","trainer_last_name",'course_name','course_start_date']
             for week in course_weeks:
                 for behaviour in behaviours:
                     column_names.append(f'{behaviour}_W{week}')
