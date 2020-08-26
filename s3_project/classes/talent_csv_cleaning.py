@@ -2,7 +2,7 @@ from s3_project.classes.ExtractionClass import ExtractFromS3
 import pandas as pd
 
 
-class talent_csv(ExtractFromS3):
+class TalentCsv(ExtractFromS3):
     def __init__(self):
         # Inherited Extraction class, ran method to get data
         super().__init__()
@@ -19,6 +19,7 @@ class talent_csv(ExtractFromS3):
             df['phone_number'] = df['phone_number'].apply(self.cleaning_phone_numbers)
             df['first_name'] = df['name'].apply(self.splitting_first_names)
             df['last_name'] = df['name'].apply(self.splitting_last_names)
+            df['gender'] = df['gender'].apply(self.formatting_gender)
             print(df.head(10))
 
     def cleaning_phone_numbers(self, phone):
@@ -35,6 +36,7 @@ class talent_csv(ExtractFromS3):
     def splitting_first_names(self, name):
         # Splits a full name and returns all but the last name
         if type(name) is str:
+            name = name.title()
             first_name = name.split()[:-1]
             return first_name
         else:
@@ -43,10 +45,18 @@ class talent_csv(ExtractFromS3):
     def splitting_last_names(self, name):
         # Splits a full name and returns only the last name
         if type(name) is str:
+            name = name.title()
             last_name = name.split()[-1]
             return last_name
         else:
             return name
+
+    def formatting_gender(self, gender):
+        if type(gender) is str:
+            gender = gender.title()
+            return gender[0]
+        else:
+            return gender
 
 
 test = talent_csv()
