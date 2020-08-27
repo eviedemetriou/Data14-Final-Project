@@ -1,14 +1,19 @@
 import pandas as pd
-from s3_project.classes.extraction_class import import_files
+import os
 import boto3
-# from ..Config.config_manager import find_variable
+
+new_wd = os.getcwd()[:-19]
+os.chdir(new_wd)
+
+from s3_project.classes.extraction_class import import_files
+from s3_project.Config.config_manager import find_variable
+
 
 class Academy:
     def __init__(self):
         self.s3_client = boto3.client('s3')
         self.files = import_files.academy_csv_list
-        # self.issue_files = find_variable('academy_csv_issues', 'ISSUE FILES')
-        self.issue_files = 'data14-engineering-project'
+        self.issue_files = find_variable('academy_csv_issues', 'ISSUE FILES')
         self.cleaned_df = self.get_cleaned_df()
 
     def append_to_txt_file(self, name, file_name):

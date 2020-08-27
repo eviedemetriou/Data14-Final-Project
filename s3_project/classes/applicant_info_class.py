@@ -1,16 +1,21 @@
-from s3_project.classes.extraction_class import import_files
-from s3_project.Config.config_manager import find_variable
 import json
 import boto3
+import os
 import pandas as pd
 from datetime import datetime
+
+new_wd = os.getcwd()[:-19]
+os.chdir(new_wd)
+
+from s3_project.classes.extraction_class import import_files
+from s3_project.Config.config_manager import find_variable
 
 
 class ApplicantInfoClean:
 
     def __init__(self):
         self.s3_client = boto3.client('s3')
-        self.bucket_name = 'data14-engineering-project'
+        self.bucket_name = find_variable("bucket_name")
         self.files = import_files.talent_json_list
         self.clean_files()
         self.df_talent_json = pd.DataFrame()
@@ -52,7 +57,7 @@ class ApplicantInfoClean:
 
     def append_file(self, file):
         # This method appends a text file.
-        with open("applicant_info_edgecases.txt", "a") as ai:
+        with open(find_variable("talent_json_issues", "ISSUE FILES"), "a") as ai:
             ai.writelines(f"{file}\n")
 
     def date_format(self, object_dict):
