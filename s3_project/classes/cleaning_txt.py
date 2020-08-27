@@ -1,6 +1,6 @@
 import boto3
 import pandas as pd
-from s3_project.classes.ExtractionClass import ExtractFromS3
+from s3_project.classes.extraction_class import ExtractFromS3
 from datetime import datetime
 
 
@@ -70,15 +70,4 @@ class TextFiles(ExtractFromS3):
     # turns dictionary into a dataframe
     def to_dataframe(self):
         dataframe = pd.DataFrame(self.final_list)
-        print(dataframe)
         return dataframe
-
-
-
-
-
-
-
-
-
-print(TextFiles())

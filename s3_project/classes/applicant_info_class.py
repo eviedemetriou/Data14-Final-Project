@@ -30,7 +30,7 @@ class ApplicantInfoClean(ExtractFromS3):
             talent_json_list.append(object_dict)
         self.create_dataframe(talent_json_list)
         self.df_talent_json = self.create_dataframe(talent_json_list)
-        print(talent_json_list)
+        return talent_json_list
 
     def split_names(self, object_dict):
         # This method splits name into first_name and last_name,
