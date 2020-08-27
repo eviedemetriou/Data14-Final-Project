@@ -110,7 +110,7 @@ class TalentCsv():
                     ai.writelines(f"{email}\n")
 
     def replace_degree(self, degree):
-        degree_dict = {'1st': '1', '3rd': '3'}
+        degree_dict = {'1st': '1', '3rd': '3', 'Pass': 'p', 'Merit': 'm', 'Distinction': 'd'}
         if degree in degree_dict.keys():
             return degree_dict[degree]
         else:
