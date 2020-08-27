@@ -1,6 +1,6 @@
 import boto3
 import pandas as pd
-from ExtractionClass import ExtractFromS3
+from s3_project.classes.ExtractionClass import ExtractFromS3
 from datetime import datetime
 
 
@@ -53,7 +53,7 @@ class TextFiles(ExtractFromS3):
     def two_names_txt(self):
         for name in self.split_list:
             if " " in list(name['first_name']):
-                with open('sparta_days_txt_2names.txt', "a") as text_file:
+                with open('../../sparta_days_txt_2names.txt', "a") as text_file:
                     text_file.writelines(f"{name['first_name']} {name['last_name']} in file: {name['date']}{name['location']}\n")
 
     # formats the date into YYYY/mm/dd format
