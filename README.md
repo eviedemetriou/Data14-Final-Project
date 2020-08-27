@@ -22,3 +22,14 @@ Goal: To have a class for cleaning each of the data files in S3
 Accomplished:
 - Created a class to extract the data for each file type in S3
 Comments:
+
+
+Sprint 4:
+Goal: Complete all 4 classes for the cleaning of files and get started on the new class for building the database
+Accomplished: 
+- Completed methods for the cleaning classes
+- Made a main.py file that calls all cleaning classes and outputs 4 separate dataframes with clean data
+- Got started on the class for building database
+Comments:
+- Will have to change format of text files with flagged data to make it clear what they show
+- Tests are not entirely finished so none of the cleaning classes was passed onto dev
