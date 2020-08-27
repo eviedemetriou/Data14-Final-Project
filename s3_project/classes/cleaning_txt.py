@@ -1,13 +1,15 @@
 import boto3
 import pandas as pd
-from s3_project.classes.extraction_class import ExtractFromS3
+from s3_project.classes.extraction_class import import_files
 from datetime import datetime
 
 
-class TextFiles(ExtractFromS3):
+class TextFiles:
 
     def __init__(self):
-        super().__init__()
+        self.s3_client = boto3.client('s3')
+        self.bucket_name = 'data14-engineering-project'
+        self.files = import_files.talent_txt_list
         self.file_contents = []
         self.iterate_txt()
         self.results = []
@@ -21,7 +23,7 @@ class TextFiles(ExtractFromS3):
 
     #Gets the information from the body of the txt file
     def iterate_txt(self):
-        for i in self.talent_txt_list:
+        for i in self.files:
             s3_object = self.s3_client.get_object(Bucket=self.bucket_name, Key=i)
             body = s3_object['Body'].read()
             strbody = body.decode('utf-8').splitlines()
@@ -69,5 +71,8 @@ class TextFiles(ExtractFromS3):
 
     # turns dictionary into a dataframe
     def to_dataframe(self):
-        dataframe = pd.DataFrame(self.final_list)
-        return dataframe
+        df = pd.DataFrame(self.final_list)
+        return df
+
+
+talent_txt = TextFiles()

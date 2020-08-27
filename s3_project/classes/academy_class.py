@@ -1,14 +1,14 @@
 import pandas as pd
-from s3_project.classes.ExtractionClass import import_files
+from s3_project.classes.extraction_class import import_files
 import boto3
-from s3_project.Config.config_manager import find_variable
-
+# from ..Config.config_manager import find_variable
 
 class Academy:
     def __init__(self):
         self.s3_client = boto3.client('s3')
         self.files = import_files.academy_csv_list
-        self.issue_files = find_variable('academy_csv_issues', 'ISSUE FILES')
+        # self.issue_files = find_variable('academy_csv_issues', 'ISSUE FILES')
+        self.issue_files = 'data14-engineering-project'
         self.cleaned_df = self.get_cleaned_df()
 
     def append_to_txt_file(self, name, file_name):
@@ -50,7 +50,7 @@ class Academy:
         df_list = []
         for file_name in self.files:
             s3_object = self.s3_client.get_object(
-                Bucket=find_variable('bucket_name'),
+                Bucket='data14-engineering-project',
                 Key=file_name)
             df = pd.read_csv(s3_object['Body'])
             file_name_split = file_name.split('_')

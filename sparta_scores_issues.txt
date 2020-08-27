@@ -1,7 +1,0 @@
-File: Academy/Business_25_2019-07-29.csv, Name: ['Prentice', 'Van', 'Der', 'Hoeven']
-File: Academy/Data_28_2019-02-18.csv, Name: ['Pyotr', 'De', 'Zuani']
-File: Academy/Data_34_2019-08-19.csv, Name: ['Micheal', 'Di', 'Matteo']
-File: Academy/Engineering_20_2019-05-27.csv, Name: ['Aldridge', 'Du', 'Fray']
-File: Academy/Engineering_23_2019-08-12.csv, Name: ['Evin', 'De', 'Roeck']
-File: Academy/Engineering_24_2019-09-16.csv, Name: ['Deirdre', 'Van', 'Den', 'Velde']
-File: Academy/Engineering_26_2019-10-28.csv, Name: ['Dixie', "O'", 'Flaherty']
