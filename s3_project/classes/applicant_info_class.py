@@ -4,8 +4,8 @@ import os
 import pandas as pd
 from datetime import datetime
 
-new_wd = os.getcwd()[:-19]
-os.chdir(new_wd)
+# new_wd = os.getcwd()[:-19]
+# os.chdir(new_wd)
 
 from s3_project.classes.extraction_class import import_files
 from s3_project.Config.config_manager import find_variable
@@ -90,4 +90,3 @@ class ApplicantInfoClean:
 
 
 talent_applicant_info = ApplicantInfoClean()
-

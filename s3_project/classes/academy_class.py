@@ -2,8 +2,8 @@ import pandas as pd
 import os
 import boto3
 
-new_wd = os.getcwd()[:-19]
-os.chdir(new_wd)
+# new_wd = os.getcwd()[:-19]
+# os.chdir(new_wd)
 
 from s3_project.classes.extraction_class import import_files
 from s3_project.Config.config_manager import find_variable

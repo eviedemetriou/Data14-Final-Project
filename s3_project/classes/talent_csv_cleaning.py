@@ -1,19 +1,27 @@
-from s3_project.classes.ExtractionClass import ExtractFromS3
+import json
+import boto3
+import os
 import pandas as pd
-import datetime
+from datetime import datetime
 
 
-extract = ExtractFromS3()
-class TalentCsv():
+from s3_project.classes.extraction_class import import_files
+from s3_project.Config.config_manager import find_variable
+
+
+class TalentCsv:
     def __init__(self):
+        self.s3_client = boto3.client('s3')
+        self.bucket_name = find_variable("bucket_name")
+        self.files = import_files.talent_csv_list
         self.df_talent_csv = pd.DataFrame()
         self.running_cleaner_methods()
 
     def running_cleaner_methods(self):
         # Iterating through list of csv's, accessing the Body to enable cleaning
-        for index in extract.talent_csv_list:
-            obj = extract.s3_client.get_object(
-                Bucket=extract.bucket_name,
+        for index in self.files:
+            obj = import_files.s3_client.get_object(
+                Bucket=import_files.bucket_name,
                 Key=index)
             df = pd.read_csv(obj['Body'])
             df = df.drop(columns='id')
@@ -75,7 +83,7 @@ class TalentCsv():
         # This formats the date in YYYY/MM/dd format
         if type(date) is str:
             date_format = '%d/%m/%Y'
-            datetime_obj = datetime.datetime.strptime(date, date_format).strftime('%Y/%m/%d')
+            datetime_obj = datetime.strptime(date, date_format).strftime('%Y/%m/%d')
             return datetime_obj
         else:
             return date
@@ -95,7 +103,7 @@ class TalentCsv():
     def flag_name(self, name):
         # This flags the name if there are more than two first names
         if len(name.split(' ')) > 2:
-            with open("monthly_applicant_names_edgecases.txt", "a") as ai:
+            with open(find_variable("talent_csv_issues", "ISSUE FILES"), "a") as ai:
                 ai.writelines(f"{name.title()}\n")
 
     def format_address(self, address):
@@ -125,3 +133,7 @@ class TalentCsv():
             return name_dict[name]
         else:
             return name
+
+
+monthly_talent_info = TalentCsv()
+

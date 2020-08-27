@@ -1,7 +1,12 @@
+import json
 import boto3
+import os
 import pandas as pd
-from s3_project.classes.extraction_class import import_files
 from datetime import datetime
+
+
+from s3_project.classes.extraction_class import import_files
+from s3_project.Config.config_manager import find_variable
 
 
 class TextFiles:
@@ -57,8 +62,8 @@ class TextFiles:
     def two_names_txt(self):
         for name in self.split_list:
             if " " in list(name['first_name']):
-                with open('../../sparta_days_txt_2names.txt', "a") as text_file:
-                    text_file.writelines(f"{name['first_name']} {name['last_name']} in file: {name['date']}{name['location']}\n")
+                with open(find_variable("talent_txt_issues", "ISSUE FILES"), "a") as text_file:
+                    text_file.writelines(f"{name['first_name']} {name['last_name']} in file: {name['date']} {name['location']}\n")
 
     # formats the date into YYYY/mm/dd format
     def date_format(self):
