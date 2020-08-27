@@ -2,11 +2,13 @@ import pandas as pd
 import os
 import boto3
 
+new_wd = os.getcwd()[:-19]
+os.chdir(new_wd)
+
 from s3_project.classes.ExtractionClass import import_files
 from s3_project.Config.config_manager import find_variable
 
-new_wd = os.getcwd()[:-19]
-os.chdir(new_wd)
+
 
 class Academy:
     def __init__(self):
