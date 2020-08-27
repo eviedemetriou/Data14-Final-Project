@@ -9,6 +9,7 @@ class ApplicantInfoClean(ExtractFromS3):
     def __init__(self):
         super().__init__()
         self.clean_files()
+        self.df_talent_json = pd.DataFrame()
 
     def clean_files(self):
         # This method iterates through each file, and applies the cleaning methods to each file.
@@ -28,6 +29,7 @@ class ApplicantInfoClean(ExtractFromS3):
             self.boolean_values(object_dict)
             talent_json_list.append(object_dict)
         self.create_dataframe(talent_json_list)
+        self.df_talent_json = self.create_dataframe(talent_json_list)
         return talent_json_list
 
     def split_names(self, object_dict):
@@ -77,3 +79,5 @@ class ApplicantInfoClean(ExtractFromS3):
         # Creates a dataframe with all the data
         df = pd.DataFrame(talent_json_list)
         return df
+
+juxhen = ApplicantInfoClean()
