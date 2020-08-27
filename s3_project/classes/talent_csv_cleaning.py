@@ -39,12 +39,10 @@ class TalentCsv():
         # Takes a phone number as an argument, changes format to fit our requirements
         if type(phone) is str:
             if phone.startswith('0'):
-                phone.replace('0', '44', 1)
+                phone = phone.replace('0', '44', 1)
             phone_filter = filter(str.isdigit, phone)
             clean_phone = "".join(phone_filter)
-            format_phone = clean_phone[:2] + ' ' + clean_phone[2:5] + ' ' + clean_phone[
-                                                                            5:8] + ' ' + clean_phone[
-                                                                                         8:]
+            format_phone = clean_phone[:2] + ' ' + clean_phone[2:5] + ' ' + clean_phone[5:8] + ' ' + clean_phone[8:]
             format_phone = f'+{format_phone}'
             return format_phone
         else:
@@ -114,6 +112,8 @@ class TalentCsv():
             if '@' not in email:
                 with open("monthly_applicant_emails_edgecases.txt", "a") as ai:
                     ai.writelines(f"{email}\n")
+                return False
+        return True
 
     def replace_degree(self, degree):
         # This method checks and converts the degree to the desired format

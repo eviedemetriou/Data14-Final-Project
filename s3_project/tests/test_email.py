@@ -4,7 +4,7 @@ test = TalentCsv()
 
 def test_email_valid():
     # Test to see if the function returns an email if it does include '@'
-    assert test.email_valid('something@gmail.com') == 'something@gmail.com'
+    assert test.email_valid('something@gmail.com')
 
 
 def test_file_created():
