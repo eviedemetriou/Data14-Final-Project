@@ -17,17 +17,20 @@ class TalentCsv(ExtractFromS3):
                 Bucket=self.bucket_name,
                 Key=index)
             df = pd.read_csv(obj['Body'])
+            df = df.drop(columns='id')
             df['phone_number'] = df['phone_number'].apply(self.cleaning_phone_numbers)
             df['first_name'] = df['name'].apply(self.splitting_first_names)
             df['last_name'] = df['name'].apply(self.splitting_last_names)
             df['gender'] = df['gender'].apply(self.formatting_gender)
-            df = df.drop(columns='id')
             df['dob'] = df['dob'].apply(self.dob_formatting)
-            print(df['dob'])
+            df['invited_date'] = df['invited_date'].apply(self.changing_day_type)
+            df['invitation_date'] = df['invited_date'] + '/' + df['month']
 
     def cleaning_phone_numbers(self, phone):
         # Takes a phone number as an argument, changes format to fit our requirements
         if type(phone) is str:
+            if phone.startswith('0'):
+                phone.replace('0', '44', 1)
             phone_filter = filter(str.isdigit, phone)
             clean_phone = "".join(phone_filter)
             format_phone = clean_phone[:2] + ' ' + clean_phone[2:5] + ' ' + clean_phone[5:8] + ' ' + clean_phone[8:]
@@ -64,12 +67,18 @@ class TalentCsv(ExtractFromS3):
     def dob_formatting(self, date):
         if type(date) is str:
             date_format = '%d/%m/%Y'
-            datetime_obj = datetime.datetime.strptime(date, date_format)
-            return datetime_obj.date()
+            datetime_obj = datetime.datetime.strptime(date, date_format).strftime('%Y/%m/%d')
+            return datetime_obj
         else:
             return date
 
+    def changing_day_type(self, num):
+        if type(num) is float:
+            num = str(num)
+            num = num.strip(num[-2:])
+            return num
+
+
+
 
 test = TalentCsv()
-
-
