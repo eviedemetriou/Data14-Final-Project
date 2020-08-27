@@ -30,12 +30,14 @@ class TextFiles(ExtractFromS3):
     # splits the name and results string to first_name, last_name, psychometric, presentation
     def split_name_results(self):
         for item in self.file_contents:
-            split = str(item['results']).strip(' Psychometrics: ').strip('Presentation:').split()
-            psyc_index = split.index('Psychometrics:')
-            self.results.append({'first_name': str(split[0:psyc_index - 2]), 'last_name': split[psyc_index - 2]
+            split = str(item['results']).split("',")
+            for person in split:
+                person_split = person.split()
+                psyc_index = person_split.index('Psychometrics:')
+                self.results.append({'first_name': str(person_split[0:psyc_index - 2]), 'last_name': person_split[psyc_index - 2]
                                     , 'date': item["date"], 'location': item["location"]
-                                    , 'psyc': split[psyc_index + 1].strip(','),
-                                 'pres': split[psyc_index + 3].strip("',")})
+                                    , 'psyc': person_split[psyc_index + 1].strip(','),
+                                 'pres': person_split[psyc_index + 3].strip("',")})
 
     # splits the presentation and psychometric scores into score and max scores, also formats the name to title casing
     def get_scores(self):
@@ -47,7 +49,7 @@ class TextFiles(ExtractFromS3):
             self.split_list.append({'first_name': name_clean.title(), 'last_name': item['last_name'].title()
                                        , 'date': item['date'], 'location': item['location'], 'psychometrics': int(psyc[0])
                                        , 'psychometric_max': int(psyc[1]), 'presentation': int(pres[0])
-                                       , 'presentation_max': int(pres[1].strip('"'))})
+                                       , 'presentation_max': int(pres[1].strip("']").strip('"'))})
 
     # append the 2 name names to a text file
     def two_names_txt(self):
@@ -68,7 +70,7 @@ class TextFiles(ExtractFromS3):
     # turns dictionary into a dataframe
     def to_dataframe(self):
         dataframe = pd.DataFrame(self.final_list)
-        print(dataframe.dtypes)
+        print(dataframe)
         return dataframe
 
 
