@@ -2,8 +2,9 @@ from s3_project.classes.ExtractionClass import ExtractFromS3
 import pandas as pd
 import datetime
 
-
 extract = ExtractFromS3()
+
+
 class TalentCsv():
     def __init__(self):
         self.df_talent_csv = pd.DataFrame()
@@ -25,12 +26,13 @@ class TalentCsv():
             df['dob'] = df['dob'].apply(self.dob_formatting)
             df['address'] = df['address'].apply(self.format_address)
             df['phone_number'] = df['phone_number'].apply(self.cleaning_phone_numbers)
-            df['degree'] = df['degree'].replace({'1st': '1', '3rd': '3'})
+            df['degree'] = df['degree'].apply(self.replace_degree)
             df = self.concat_dates(df, 'invited_date', 'month')
-            df['invited_by'] = df['invited_by'].replace(
-                {'Bruno Bellbrook': 'Bruno Belbrook', 'Fifi Eton': 'Fifi Etton'})
-            df = df[['first_name', 'last_name', 'gender', 'dob', 'email', 'city', 'address', 'postcode', 'phone_number',
-                                                                        'uni', 'degree', 'invited_date', 'invited_by']]
+            df['invited_by'] = df['invited_by'].apply(self.change_invited_by)
+            df = df[
+                ['first_name', 'last_name', 'gender', 'dob', 'email', 'city', 'address', 'postcode',
+                 'phone_number',
+                 'uni', 'degree', 'invited_date', 'invited_by']]
             self.df_talent_csv = self.df_talent_csv.append(df, ignore_index=True)
 
     def cleaning_phone_numbers(self, phone):
@@ -40,7 +42,9 @@ class TalentCsv():
                 phone.replace('0', '44', 1)
             phone_filter = filter(str.isdigit, phone)
             clean_phone = "".join(phone_filter)
-            format_phone = clean_phone[:2] + ' ' + clean_phone[2:5] + ' ' + clean_phone[5:8] + ' ' + clean_phone[8:]
+            format_phone = clean_phone[:2] + ' ' + clean_phone[2:5] + ' ' + clean_phone[
+                                                                            5:8] + ' ' + clean_phone[
+                                                                                         8:]
             format_phone = f'+{format_phone}'
             return format_phone
         else:
@@ -73,7 +77,7 @@ class TalentCsv():
             return gender
 
     def dob_formatting(self, date):
-        # This formats the date in YYYY/MM/dd
+        # This formats the date in YYYY/MM/dd format
         if type(date) is str:
             date_format = '%d/%m/%Y'
             datetime_obj = datetime.datetime.strptime(date, date_format).strftime('%Y/%m/%d')
@@ -82,7 +86,8 @@ class TalentCsv():
             return date
 
     def concat_dates(self, df, day, month_year):
-        # This takes in a dataframe, with the name of two columns and returns a concatenated and formatted date
+        # This takes in a data-frame, with the name of two columns and returns the data-frame with a concatenated
+        # and formatted date
         df[day] = df[day].fillna(0)
         df[month_year] = df[month_year].fillna(0)
         df['new_date'] = df[day].astype(int).map(str) + ' ' + df[month_year].map(str)
@@ -93,7 +98,7 @@ class TalentCsv():
         return df
 
     def flag_name(self, name):
-        # This flags the name if it there are more than two names
+        # This flags the name if there are more than two first names
         if len(name.split(' ')) > 2:
             with open("monthly_applicant_names_edgecases.txt", "a") as ai:
                 ai.writelines(f"{name.title()}\n")
@@ -111,6 +116,7 @@ class TalentCsv():
                     ai.writelines(f"{email}\n")
 
     def replace_degree(self, degree):
+        # This method checks and converts the degree to the desired format
         degree_dict = {'1st': '1', '3rd': '3', 'Pass': 'p', 'Merit': 'm', 'Distinction': 'd'}
         if degree in degree_dict.keys():
             return degree_dict[degree]
@@ -118,6 +124,7 @@ class TalentCsv():
             return degree
 
     def change_invited_by(self, name):
+        # This method checks and converts the names to the correct spelling
         name_dict = {'Bruno Bellbrook': 'Bruno Belbrook', 'Fifi Eton': 'Fifi Etton'}
         if name in name_dict.keys():
             return name_dict[name]
