@@ -72,7 +72,7 @@ class TalentCsv():
             return gender
 
     def dob_formatting(self, date):
-        # This formats the date in YYYY/MM/dd
+        # This formats the date in YYYY/MM/dd format
         if type(date) is str:
             date_format = '%d/%m/%Y'
             datetime_obj = datetime.datetime.strptime(date, date_format).strftime('%Y/%m/%d')
@@ -81,7 +81,8 @@ class TalentCsv():
             return date
 
     def concat_dates(self, df, day, month_year):
-        # This takes in a dataframe, with the name of two columns and returns a concatenated and formatted date
+        # This takes in a data-frame, with the name of two columns and returns the data-frame with a concatenated
+        # and formatted date
         df[day] = df[day].fillna(0)
         df[month_year] = df[month_year].fillna(0)
         df['new_date'] = df[day].astype(int).map(str) + ' ' + df[month_year].map(str)
@@ -92,7 +93,7 @@ class TalentCsv():
         return df
 
     def flag_name(self, name):
-        # This flags the name if it there are more than two names
+        # This flags the name if there are more than two first names
         if len(name.split(' ')) > 2:
             with open("monthly_applicant_names_edgecases.txt", "a") as ai:
                 ai.writelines(f"{name.title()}\n")
@@ -110,6 +111,7 @@ class TalentCsv():
                     ai.writelines(f"{email}\n")
 
     def replace_degree(self, degree):
+        # This method checks and converts the degree to the desired format
         degree_dict = {'1st': '1', '3rd': '3', 'Pass': 'p', 'Merit': 'm', 'Distinction': 'd'}
         if degree in degree_dict.keys():
             return degree_dict[degree]
@@ -117,6 +119,7 @@ class TalentCsv():
             return degree
 
     def change_invited_by(self, name):
+        # This method checks and converts the names to the correct spelling
         name_dict = {'Bruno Bellbrook': 'Bruno Belbrook', 'Fifi Eton': 'Fifi Etton'}
         if name in name_dict.keys():
             return name_dict[name]
