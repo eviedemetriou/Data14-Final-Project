@@ -25,10 +25,8 @@ class TalentCsv():
             df['dob'] = df['dob'].apply(self.dob_formatting)
             df['address'] = df['address'].apply(self.format_address)
             df['phone_number'] = df['phone_number'].apply(self.cleaning_phone_numbers)
-            df['degree'] = df['degree'].replace({'1st': '1', '3rd': '3'})
+            df['degree'] = df['degree'].apply(self.replace_degree)
             df = self.concat_dates(df, 'invited_date', 'month')
-            df['invited_date'] = df['new_date']
-            df = df.drop(columns=['month', 'new_date'])
             df['invited_by'] = df['invited_by'].replace(
                 {'Bruno Bellbrook': 'Bruno Belbrook', 'Fifi Eton': 'Fifi Etton'})
             df = df[['first_name', 'last_name', 'gender', 'dob', 'email', 'city', 'address', 'postcode', 'phone_number',
@@ -90,6 +88,8 @@ class TalentCsv():
         df['new_date'] = df[day].astype(int).map(str) + ' ' + df[month_year].map(str)
         df['new_date'].replace({'0 0': None}, inplace=True)
         df['new_date'] = pd.to_datetime(df.new_date).dt.strftime('%Y/%m/%d')
+        df['invited_date'] = df['new_date']
+        df = df.drop(columns=['month', 'new_date'])
         return df
 
     def flag_name(self, name):
@@ -109,3 +109,12 @@ class TalentCsv():
             if '@' not in email:
                 with open("monthly_applicant_emails_edgecases.txt", "a") as ai:
                     ai.writelines(f"{email}\n")
+
+    def replace_degree(self, degree):
+        degree_dict = {'1st': '1', '3rd': '3'}
+        if degree in degree_dict.keys():
+            return degree_dict[degree]
+        else:
+            return degree
+testing = TalentCsv()
+print(testing.df_talent_csv)
