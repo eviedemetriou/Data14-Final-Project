@@ -77,4 +77,3 @@ class ApplicantInfoClean(ExtractFromS3):
         # Creates a dataframe with all the data
         df = pd.DataFrame(talent_json_list)
         print(df[['tech_self_score', 'strengths']])
-
