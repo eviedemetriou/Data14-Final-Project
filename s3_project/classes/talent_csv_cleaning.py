@@ -7,9 +7,9 @@ class TalentCsv(ExtractFromS3):
     def __init__(self):
         # Inherited Extraction class, ran method to get data
         super().__init__()
-        super().get_data()
+        self.df_talent_csv = pd.DataFrame()
         self.running_cleaner_methods()
-        self.df_talent_csv = df.
+
 
     def running_cleaner_methods(self):
         # Iterating through list of csv's, accessing the Body to enable cleaning
@@ -24,10 +24,13 @@ class TalentCsv(ExtractFromS3):
             df['gender'] = df['gender'].apply(self.formatting_gender)
             df['dob'] = df['dob'].apply(self.dob_formatting)
             df['phone_number'] = df['phone_number'].apply(self.cleaning_phone_numbers)
-            df['invited_date'] = df['invited_date'].apply(self.changing_day_type)
-            df['invitation_date'] = df['invited_date'] + '/' + df['month']
-            df['invited_by'] = df['invited_by'].replace({'Bruno Bellbrook': 'Bruno Belbrook', 'Fifi Eton': 'Fifi Etton'}, inplace=True)
-            self.df_talent_csv.append(df, ignore_index=True)
+            df = self.concat_dates(df, 'invited_date', 'month')
+            df['invited_date'] = df['new_date']
+            df = df.drop(columns=['month', 'new_date'])
+            df['invited_by'] = df['invited_by'].replace({'Bruno Bellbrook': 'Bruno Belbrook', 'Fifi Eton': 'Fifi Etton'})
+            df_talent_csv = self.df_talent_csv.append(df, ignore_index=True)
+            self.df_talent_csv = df_talent_csv
+        print(self.df_talent_csv[['invited_date', 'invited_by']])
 
 
     def cleaning_phone_numbers(self, phone):
@@ -82,8 +85,17 @@ class TalentCsv(ExtractFromS3):
             num = num.strip(num[-2:])
             return num
 
-
+    def concat_dates(self, df, day, month_year):
+        df[day] = df[day].fillna(0)
+        df[month_year] = df[month_year].fillna(0)
+        df['new_date'] = df[day].astype(int).map(str) + ' ' + df[month_year].map(str)
+        df['new_date'].replace({'0 0': None}, inplace=True)
+        df['new_date'] = pd.to_datetime(df.new_date).dt.strftime('%Y/%m/%d')
+        # df = df.drop(columns=[day, month_year, 'new_date'])
+        return df
 
 test = TalentCsv()
+
+
 
 
