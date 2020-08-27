@@ -109,7 +109,6 @@ class TalentCsv():
             if '@' not in email:
                 with open("monthly_applicant_emails_edgecases.txt", "a") as ai:
                     ai.writelines(f"{email}\n")
-        return email
 
     def replace_degree(self, degree):
         degree_dict = {'1st': '1', '3rd': '3', 'Pass': 'p', 'Merit': 'm', 'Distinction': 'd'}
