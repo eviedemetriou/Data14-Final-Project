@@ -8,7 +8,7 @@ class Academy:
     def __init__(self):
         self.s3_client = boto3.client('s3')
         self.files = import_files.academy_csv_list
-        self.issue_files = find_variable('academy_csv_issues')
+        self.issue_files = find_variable('academy_csv_issues', 'ISSUE FILES')
         self.cleaned_df = self.get_cleaned_df()
 
     def append_to_txt_file(self, name, file_name):
