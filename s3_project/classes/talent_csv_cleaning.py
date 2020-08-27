@@ -3,18 +3,17 @@ import pandas as pd
 import datetime
 
 
-class TalentCsv(ExtractFromS3):
+extract = ExtractFromS3()
+class TalentCsv():
     def __init__(self):
-        # Inherited Extraction class, ran method to get data
-        super().__init__()
         self.df_talent_csv = pd.DataFrame()
         self.running_cleaner_methods()
 
     def running_cleaner_methods(self):
         # Iterating through list of csv's, accessing the Body to enable cleaning
-        for index in self.talent_csv_list:
-            obj = self.s3_client.get_object(
-                Bucket=self.bucket_name,
+        for index in extract.talent_csv_list:
+            obj = extract.s3_client.get_object(
+                Bucket=extract.bucket_name,
                 Key=index)
             df = pd.read_csv(obj['Body'])
             df = df.drop(columns='id')
