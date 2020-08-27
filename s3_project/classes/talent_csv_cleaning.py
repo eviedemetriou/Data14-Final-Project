@@ -40,7 +40,7 @@ class TalentCsv(ExtractFromS3):
         # Splits a full name and returns all but the last name
         if type(name) is str:
             name = name.title()
-            first_name = name.split()[:-1]
+            first_name = ' '.join(name.split(' ')[:-1])
             return first_name
         else:
             return name
@@ -49,7 +49,7 @@ class TalentCsv(ExtractFromS3):
         # Splits a full name and returns only the last name
         if type(name) is str:
             name = name.title()
-            last_name = name.split()[-1]
+            last_name = name.split(' ')[-1]
             return last_name
         else:
             return name
