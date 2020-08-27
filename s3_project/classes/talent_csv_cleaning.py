@@ -9,6 +9,7 @@ class TalentCsv(ExtractFromS3):
         super().__init__()
         super().get_data()
         self.running_cleaner_methods()
+        self.df_talent_csv = df.
 
     def running_cleaner_methods(self):
         # Iterating through list of csv's, accessing the Body to enable cleaning
@@ -18,13 +19,16 @@ class TalentCsv(ExtractFromS3):
                 Key=index)
             df = pd.read_csv(obj['Body'])
             df = df.drop(columns='id')
-            df['phone_number'] = df['phone_number'].apply(self.cleaning_phone_numbers)
             df['first_name'] = df['name'].apply(self.splitting_first_names)
             df['last_name'] = df['name'].apply(self.splitting_last_names)
             df['gender'] = df['gender'].apply(self.formatting_gender)
             df['dob'] = df['dob'].apply(self.dob_formatting)
+            df['phone_number'] = df['phone_number'].apply(self.cleaning_phone_numbers)
             df['invited_date'] = df['invited_date'].apply(self.changing_day_type)
             df['invitation_date'] = df['invited_date'] + '/' + df['month']
+            df['invited_by'] = df['invited_by'].replace({'Bruno Bellbrook': 'Bruno Belbrook', 'Fifi Eton': 'Fifi Etton'}, inplace=True)
+            self.df_talent_csv.append(df, ignore_index=True)
+
 
     def cleaning_phone_numbers(self, phone):
         # Takes a phone number as an argument, changes format to fit our requirements
@@ -43,7 +47,7 @@ class TalentCsv(ExtractFromS3):
         # Splits a full name and returns all but the last name
         if type(name) is str:
             name = name.title()
-            first_name = name.split()[:-1]
+            first_name = ' '.join(name.split(' ')[:-1])
             return first_name
         else:
             return name
@@ -52,7 +56,7 @@ class TalentCsv(ExtractFromS3):
         # Splits a full name and returns only the last name
         if type(name) is str:
             name = name.title()
-            last_name = name.split()[-1]
+            last_name = name.split(' ')[-1]
             return last_name
         else:
             return name
@@ -80,5 +84,6 @@ class TalentCsv(ExtractFromS3):
 
 
 
-
 test = TalentCsv()
+
+
