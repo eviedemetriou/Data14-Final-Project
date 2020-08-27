@@ -27,8 +27,7 @@ class TalentCsv():
             df['phone_number'] = df['phone_number'].apply(self.cleaning_phone_numbers)
             df['degree'] = df['degree'].apply(self.replace_degree)
             df = self.concat_dates(df, 'invited_date', 'month')
-            df['invited_by'] = df['invited_by'].replace(
-                {'Bruno Bellbrook': 'Bruno Belbrook', 'Fifi Eton': 'Fifi Etton'})
+            df['invited_by'] = df['invited_by'].apply(self.change_invited_by)
             df = df[['first_name', 'last_name', 'gender', 'dob', 'email', 'city', 'address', 'postcode', 'phone_number',
                                                                         'uni', 'degree', 'invited_date', 'invited_by']]
             self.df_talent_csv = self.df_talent_csv.append(df, ignore_index=True)
@@ -116,5 +115,10 @@ class TalentCsv():
             return degree_dict[degree]
         else:
             return degree
-testing = TalentCsv()
-print(testing.df_talent_csv)
+
+    def change_invited_by(self, name):
+        name_dict = {'Bruno Bellbrook': 'Bruno Belbrook', 'Fifi Eton': 'Fifi Etton'}
+        if name in name_dict.keys():
+            return name_dict[name]
+        else:
+            return name
