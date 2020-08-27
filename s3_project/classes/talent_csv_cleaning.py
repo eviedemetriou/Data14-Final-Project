@@ -64,7 +64,7 @@ class TalentCsv(ExtractFromS3):
     def dob_formatting(self, date):
         if type(date) is str:
             date_format = '%d/%m/%Y'
-            datetime_obj = datetime.datetime.strptime(date, date_format)
-            return datetime_obj.date()
+            datetime_obj = datetime.datetime.strptime(date, date_format).strftime('%Y/%m/%d')
+            return datetime_obj
         else:
             return date
