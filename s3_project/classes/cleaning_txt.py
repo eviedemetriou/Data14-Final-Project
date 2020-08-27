@@ -13,10 +13,11 @@ class TextFiles(ExtractFromS3):
         self.results = []
         self.split_name_results()
         self.split_list = []
-        self.get_scores()
+        self.clean_scores_names()
         self.two_names_txt()
         self.final_list = []
         self.date_format()
+        self.dataframe = ""
         self.to_dataframe()
 
     def iterate_txt(self):
@@ -39,7 +40,7 @@ class TextFiles(ExtractFromS3):
                                     , 'psyc': person_split[psyc_index + 1].strip(','),
                                  'pres': person_split[psyc_index + 3].strip("',")})
 
-    def get_scores(self):
+    def clean_scores_names(self):
         # Splits the presentation and psychometric scores into score and max scores, also formats the name to title casing
         for item in self.results:
             psyc = item['psyc'].split('/')
@@ -72,9 +73,8 @@ class TextFiles(ExtractFromS3):
 
     def to_dataframe(self):
         # Turns dictionary into a dataframe
-        dataframe = pd.DataFrame(self.final_list)
-        print(dataframe)
-        return dataframe
+        self.dataframe = pd.DataFrame(self.final_list)
+        print(self.dataframe)
 
 
-print(TextFiles())
+trial = TextFiles()
